@@ -9,7 +9,11 @@ metadata:
   name: test-vpc-1
 spec:
   namespaces:
-  - ns1
+    - ns1
+  staticRoutes:
+    - cidr: 0.0.0.0/0
+      nextHopIP: 10.0.1.254
+      policy: policyDst
 ---
 apiVersion: kubeovn.io/v1
 kind: Subnet
@@ -65,24 +69,6 @@ spec:
         "provider": "ovn-vpc-external-network.kube-system"
       }
     }'
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: ovn-vpc-nat-config
-  namespace: kube-system
-data:
-  image: 'docker.io/kubeovn/vpc-nat-gateway:v1.14.1' 
-  nodeSelector: |
-    kubernetes.io/hostname: k8s-node3-virtual-machine
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: ovn-vpc-nat-gw-config
-  namespace: kube-system
-data:
-  enable-vpc-nat-gw: 'true'
 ---
 apiVersion: kubeovn.io/v1
 kind: VpcNatGateway
