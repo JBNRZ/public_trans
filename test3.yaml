@@ -47,7 +47,7 @@ spec:
   config: '{
       "cniVersion": "0.3.0",
       "type": "macvlan",
-      "master": "enp11s0",
+      "master": "ens192",
       "mode": "bridge",
       "ipam": {
         "type": "kube-ovn",
