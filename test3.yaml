@@ -84,14 +84,15 @@ spec:
 apiVersion: kubeovn.io/v1
 kind: IptablesEIP
 metadata:
-  name: eipf01
+  name: eip01
 spec:
+  v4ip: 10.233.234.234
   natGwDp: gw1
 ---
 apiVersion: kubeovn.io/v1
-kind: IptablesFIPRule
+kind: IptablesSnatRule
 metadata:
-  name: fip01
+  name: snat01
 spec:
-  eip: eipf01
-  internalIp: 10.0.1.10
+  eip: eip01
+  internalCIDR: 10.0.1.0/24
