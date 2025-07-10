@@ -1,3 +1,15 @@
+apiVersion: kubeovn.io/v1
+kind: Subnet
+metadata:
+  name: ovn-vpc-external-network
+spec:
+  protocol: IPv4
+  provider: ovn-vpc-external-network.kube-system
+  cidrBlock: 10.233.0.0/16
+  gateway: 10.233.233.233  # IP address of the physical gateway
+  excludeIps:
+  - 10.233.0.1..10.233.233.255
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
