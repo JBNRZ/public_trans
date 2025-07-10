@@ -59,7 +59,7 @@ spec:
   namespaces:
     - ns1
   staticRoutes: 
-    - cidr: 0.0.0.0/0
+    - cidr: 10.233.0.0/16
       nextHopIP: 10.0.1.254
 ---
 apiVersion: kubeovn.io/v1
