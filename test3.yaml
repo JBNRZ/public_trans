@@ -78,9 +78,6 @@ spec:
   vpc: test-vpc-1
   subnet: net1
   lanIp: 10.0.1.254
-  selector:
-    - "kubernetes.io/hostname: k8s-node3-virtual-machine"
-    - "kubernetes.io/os: linux"
   externalSubnets:
     - ovn-vpc-external-network
 ---
