@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test
+spec:
+  containers:
+    - name: test
+      image: nicolaka/netshoot:v0.13
+      command: ["sleep", "infinity"]
