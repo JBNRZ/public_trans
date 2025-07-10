@@ -72,7 +72,6 @@ kind: IptablesEIP
 metadata:
   name: eip01
 spec:
-  v4ip: 10.233.234.234
   natGwDp: gw1
   externalSubnet: ovn-vpc-external-network
 ---
