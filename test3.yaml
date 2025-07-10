@@ -74,14 +74,22 @@ metadata:
 spec:
   natGwDp: gw1
   externalSubnet: ovn-vpc-external-network
+# ---
+# apiVersion: kubeovn.io/v1
+# kind: IptablesSnatRule
+# metadata:
+#   name: snat01
+# spec:
+#   eip: eip01
+#   internalCIDR: 10.0.1.0/24
 ---
 apiVersion: kubeovn.io/v1
-kind: IptablesSnatRule
+kind: IptablesFIPRule
 metadata:
-  name: snat01
+  name: fip01
 spec:
   eip: eip01
-  internalCIDR: 10.0.1.0/24
+  internalIp: 10.0.1.10
 ---
 apiVersion: v1
 kind: Pod
