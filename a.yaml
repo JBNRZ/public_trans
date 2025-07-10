@@ -1,0 +1,10 @@
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ovn-vpc-nat-config
+  namespace: kube-system
+data:
+  image: 'docker.io/kubeovn/vpc-nat-gateway:v1.14.1' 
+  nodeSelector: |
+    kubernetes.io/hostname: k8s-node3-virtual-machine
