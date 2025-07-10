@@ -84,24 +84,14 @@ spec:
 apiVersion: kubeovn.io/v1
 kind: IptablesEIP
 metadata:
-  name: eip-random
+  name: eipf01
 spec:
   natGwDp: gw1
 ---
 apiVersion: kubeovn.io/v1
-kind: IptablesEIP
+kind: IptablesFIPRule
 metadata:
-  name: eipd01
+  name: fip01
 spec:
-  natGwDp: gw1
----
-kind: IptablesDnatRule
-apiVersion: kubeovn.io/v1
-metadata:
-  name: dnat01
-spec:
-  eip: eipd01
-  externalPort: '8888'
+  eip: eipf01
   internalIp: 10.0.1.10
-  internalPort: '80'
-  protocol: tcp
