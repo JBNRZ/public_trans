@@ -1,0 +1,128 @@
+apiVersion: kubeovn.io/v1
+kind: Subnet
+metadata:
+  name: ovn-vpc-external-network
+spec:
+  protocol: IPv4
+  provider: ovn-vpc-external-network.kube-system
+  cidrBlock: 10.233.0.0/16
+  gateway: 10.233.233.233  # IP address of the physical gateway
+  excludeIps:
+  - 10.233.0.1..10.233.233.255
+---
+apiVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+metadata:
+  name: ovn-vpc-external-network
+  namespace: kube-system
+spec:
+  config: '{
+      "cniVersion": "0.3.0",
+      "type": "macvlan",
+      "master": "ens192",
+      "mode": "bridge",
+      "ipam": {
+        "type": "kube-ovn",
+        "server_socket": "/run/openvswitch/kube-ovn-daemon.sock",
+        "provider": "ovn-vpc-external-network.kube-system"
+      }
+    }'
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ovn-vpc-nat-config
+  namespace: kube-system
+data:
+  image: 'docker.io/kubeovn/vpc-nat-gateway:v1.14.1' 
+  nodeSelector: |
+    kubernetes.io/hostname: k8s-node3-virtual-machine
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ovn-vpc-nat-gw-config
+  namespace: kube-system
+data:
+  enable-vpc-nat-gw: 'true'
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ns1
+---
+apiVersion: kubeovn.io/v1
+kind: Vpc
+metadata:
+  name: test-vpc-1
+spec:
+  namespaces:
+    - ns1
+  staticRoute: 
+    - cidr: 0.0.0.0/0
+      nextHopIP: 10.0.1.254
+---
+apiVersion: kubeovn.io/v1
+kind: Subnet
+metadata:
+  name: subnet1
+spec:
+  vpc: test-vpc-1
+  cidrBlock: 10.0.1.0/24
+  protocol: IPv4
+  natOutgoing: true
+  namespaces: 
+    - ns1
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: ns1
+  name: pod-1-1
+  annotations:
+    ovn.kubernetes.io/logical_switch: "subnet1"
+spec:
+  containers:
+    - name: test-1-1
+      image: nicolaka/netshoot:v0.13
+      command: ["sleep", "infinity"]
+---
+apiVersion: kubeovn.io/v1
+kind: VpcNatGateway
+metadata:
+  name: gw1
+spec:
+  vpc: test-vpc-1
+  subnet: subnet1
+  lanIp: 10.0.1.254
+  selector:
+    - "kubernetes.io/hostname: k8s-node3-virtual-machine"
+  externalSubnets:
+    - ovn-vpc-external-network
+---
+apiVersion: kubeovn.io/v1
+kind: IptablesEIP
+metadata:
+  name: eip01
+spec:
+  natGwDp: gw1
+  externalSubnet: ovn-vpc-external-network
+---
+apiVersion: kubeovn.io/v1
+kind: IptablesDnatRule
+metadata:
+  name: dnat01
+spec:
+  eip: eip01
+  externalPort: '8888'
+  internalIp: 10.0.1.2
+  internalPort: '4000'
+  protocol: tcp
+# ---
+# apiVersion: kubeovn.io/v1
+# kind: IptablesSnatRule
+# metadata:
+#   name: snat01
+# spec:
+#   eip: eip01
+#   internalCIDR: 10.0.1.0/24
