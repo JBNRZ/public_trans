@@ -36,7 +36,7 @@ spec:
   cidrBlock: 10.233.0.0/16
   gateway: 10.233.233.233  # IP address of the physical gateway
   excludeIps:
-  - 10.233.0.1..10.233.233.255
+  - 10.233.0.1..10.233.234.0
 ---
 apiVersion: "k8s.cni.cncf.io/v1"
 kind: NetworkAttachmentDefinition
@@ -74,22 +74,14 @@ metadata:
 spec:
   natGwDp: gw1
   externalSubnet: ovn-vpc-external-network
-# ---
-# apiVersion: kubeovn.io/v1
-# kind: IptablesSnatRule
-# metadata:
-#   name: snat01
-# spec:
-#   eip: eip01
-#   internalCIDR: 10.0.1.0/24
 ---
 apiVersion: kubeovn.io/v1
-kind: IptablesFIPRule
+kind: IptablesSnatRule
 metadata:
-  name: fip01
+  name: snat01
 spec:
   eip: eip01
-  internalIp: 10.0.1.10
+  internalCIDR: 10.0.1.0/24
 ---
 apiVersion: v1
 kind: Pod
