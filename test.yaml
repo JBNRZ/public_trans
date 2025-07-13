@@ -3,144 +3,26 @@ kind: Namespace
 metadata:
   name: ns1
 ---
-apiVersion: kubeovn.io/v1
-kind: Vpc
-metadata:
-  name: test-vpc-1
-spec:
-  namespaces:
-    - ns1
-  staticRoutes:
-    - cidr: 0.0.0.0/0
-      nextHopIP: 10.0.1.254
-      policy: policyDst
----
-apiVersion: "k8s.cni.cncf.io/v1"
-kind: NetworkAttachmentDefinition
-metadata:
-  name: net1
-  namespace: ns1
-spec:
-  config: '{
-      "cniVersion": "0.3.0",
-      "type": "kube-ovn",
-      "server_socket": "/run/openvswitch/kube-ovn-daemon.sock",
-      "provider": "net1.ns1.ovn"
-    }'
----
-apiVersion: kubeovn.io/v1
 kind: Subnet
+apiVersion: kubeovn.io/v1
 metadata:
   name: net1
 spec:
-  vpc: test-vpc-1
-  protocol: IPv4
-  provider: net1.ns1.ovn
   cidrBlock: 10.0.1.0/24
-  gateway: 10.0.1.1
-  excludeIps:
-    - 10.0.1.0..10.0.1.10
+  protocol: IPv4
   namespaces:
     - ns1
----
-apiVersion: "k8s.cni.cncf.io/v1"
-kind: NetworkAttachmentDefinition
-metadata:
-  name: net2
-  namespace: ns1
-spec:
-  config: '{
-      "cniVersion": "0.3.0",
-      "type": "kube-ovn",
-      "server_socket": "/run/openvswitch/kube-ovn-daemon.sock",
-      "provider": "net2.ns1.ovn"
-    }'
----
-apiVersion: kubeovn.io/v1
-kind: Subnet
-metadata:
-  name: net2
-spec:
-  vpc: test-vpc-1
-  protocol: IPv4
-  provider: net2.ns1.ovn
-  cidrBlock: 172.17.0.0/16
-  gateway: 172.17.0.1
-  excludeIps:
-    - 172.17.0.0..172.17.0.10
-  namespaces:
-    - ns1
----
-apiVersion: kubeovn.io/v1
-kind: Subnet
-metadata:
-  name: ovn-vpc-external-network
-spec:
-  protocol: IPv4
-  provider: ovn-vpc-external-network.kube-system
-  cidrBlock: 10.233.0.0/16
-  gateway: 10.233.233.233  # IP address of the physical gateway
-  excludeIps:
-  - 10.233.0.1..10.233.234.0
----
-apiVersion: "k8s.cni.cncf.io/v1"
-kind: NetworkAttachmentDefinition
-metadata:
-  name: ovn-vpc-external-network
-  namespace: kube-system
-spec:
-  config: '{
-      "cniVersion": "0.3.0",
-      "type": "macvlan",
-      "master": "ens192",
-      "mode": "bridge",
-      "ipam": {
-        "type": "kube-ovn",
-        "server_socket": "/run/openvswitch/kube-ovn-daemon.sock",
-        "provider": "ovn-vpc-external-network.kube-system"
-      }
-    }'
----
-apiVersion: kubeovn.io/v1
-kind: VpcNatGateway
-metadata:
-  name: gw1
-spec:
-  vpc: test-vpc-1
-  subnet: net1
-  lanIp: 10.0.1.254
-  externalSubnets:
-    - ovn-vpc-external-network
----
-apiVersion: kubeovn.io/v1
-kind: IptablesEIP
-metadata:
-  name: eip01
-spec:
-  natGwDp: gw1
-  externalSubnet: ovn-vpc-external-network
----
-apiVersion: kubeovn.io/v1
-kind: IptablesSnatRule
-metadata:
-  name: snat01
-spec:
-  eip: eip01
-  internalCIDR: 10.0.1.0/24
 ---
 apiVersion: v1
 kind: Pod
 metadata:
   namespace: ns1
-  name: pod-1-1
+  name: test-pod
   annotations:
-    ovn.kubernetes.io/logical_switch: net1
-    ovn.kubernetes.io/ip_address: 10.0.1.11
-    k8s.v1.cni.cncf.io/networks: ns1/net2
-    net2.ns1.ovn.kubernetes.io/logical_switch: net2
-    net2.ns1.ovn.kubernetes.io/ip_address: 172.17.0.11
+    ovn.kubernetes.io/logical_switch: "net1"
+    ovn.kubernetes.io/ip_address: "10.0.1.10"
 spec:
   containers:
-    - name: test-1-1
+    - name: test
       image: nicolaka/netshoot:v0.13
       command: ["sleep", "infinity"]
