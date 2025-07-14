@@ -43,5 +43,6 @@ spec:
     - app=test
   ports:
   - name: test
+    port: 80
     targetPort: 80
     protocol: TCP
