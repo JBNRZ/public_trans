@@ -3,21 +3,27 @@ kind: Namespace
 metadata:
   name: ns1
 ---
+apiVersion: kubeovn.io/v1
+kind: Vpc
+metadata:
+  name: test-vpc-1
+---
 kind: Subnet
 apiVersion: kubeovn.io/v1
 metadata:
   name: net1
 spec:
+  vpc: test-vpc-1
   cidrBlock: 10.0.1.0/24
   protocol: IPv4
-  namespaces:
-    - ns1
 ---
 apiVersion: v1
 kind: Pod
 metadata:
   namespace: ns1
   name: test-pod
+  labels:
+    - app: test
   annotations:
     ovn.kubernetes.io/logical_switch: "net1"
     ovn.kubernetes.io/ip_address: "10.0.1.10"
@@ -26,3 +32,16 @@ spec:
     - name: test
       image: nicolaka/netshoot:v0.13
       command: ["sleep", "infinity"]
+---
+apiVersion: kubeovn.io/v1
+kind: SwitchLBRule
+metadata:
+  name: test-lb
+spec:
+  namespace: ns1
+  selector:
+    - app=test
+  ports:
+  - name: test
+    targetPort: 80
+    protocol: TCP
