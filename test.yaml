@@ -38,11 +38,12 @@ kind: SwitchLBRule
 metadata:
   name: test-lb
 spec:
+  vip: 10.96.96.10
   namespace: ns1
   selector:
     - app=test
   ports:
-  - name: test
-    port: 80
-    targetPort: 80
-    protocol: TCP
+    - name: test
+      port: 80
+      targetPort: 80
+      protocol: TCP
