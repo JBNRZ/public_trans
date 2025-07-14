@@ -23,7 +23,7 @@ metadata:
   namespace: ns1
   name: test-pod
   labels:
-    - app: test
+    app: test
   annotations:
     ovn.kubernetes.io/logical_switch: "net1"
     ovn.kubernetes.io/ip_address: "10.0.1.10"
