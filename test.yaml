@@ -50,8 +50,9 @@ metadata:
   labels:
     app: test
   annotations:
-    ovn.kubernetes.io/logical_switch: "net1"
-    ovn.kubernetes.io/ip_address: "10.0.1.10"
+    k8s.v1.cni.cncf.io/networks: ns1/net1
+    net1.ns1.ovn.kubernetes.io/logical_switch: net1
+    net1.ns1.ovn.kubernetes.io/ip_address: 10.0.1.10
 spec:
   containers:
     - name: test
