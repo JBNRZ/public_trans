@@ -17,6 +17,17 @@ spec:
   cidrBlock: 10.0.1.0/24
   protocol: IPv4
 ---
+apiVersion: kubeovn.io/v1
+kind: IP
+metadata:
+  name: test-pod-ip
+spec:
+  subnet: net1
+  podType: ""
+  namespace: ns1
+  podName: test-pod
+  v4IpAddress: 10.0.1.10
+---
 apiVersion: v1
 kind: Pod
 metadata:
@@ -32,18 +43,3 @@ spec:
     - name: test
       image: nicolaka/netshoot:v0.13
       command: ["sleep", "infinity"]
----
-apiVersion: kubeovn.io/v1
-kind: SwitchLBRule
-metadata:
-  name: test-lb
-spec:
-  vip: 10.96.96.10
-  namespace: ns1
-  selector:
-    - app=test
-  ports:
-    - name: test
-      port: 80
-      targetPort: 80
-      protocol: TCP
