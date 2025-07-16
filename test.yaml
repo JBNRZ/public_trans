@@ -20,7 +20,7 @@ spec:
 apiVersion: kubeovn.io/v1
 kind: IP
 metadata:
-  name: test-pod-ip
+  name: test-pod.ns1
 spec:
   subnet: net1
   podType: ""
