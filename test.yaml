@@ -8,19 +8,33 @@ kind: Vpc
 metadata:
   name: test-vpc-1
 ---
+apiVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+metadata:
+  name: net1
+  namespace: ns1
+spec:
+  config: '{
+      "cniVersion": "0.3.0",
+      "type": "kube-ovn",
+      "server_socket": "/run/openvswitch/kube-ovn-daemon.sock",
+      "provider": "net1.ns1.ovn"
+    }'
+---
 kind: Subnet
 apiVersion: kubeovn.io/v1
 metadata:
   name: net1
 spec:
   vpc: test-vpc-1
+  provider: net1.ns1.ovn
   cidrBlock: 10.0.1.0/24
   protocol: IPv4
 ---
 apiVersion: kubeovn.io/v1
 kind: IP
 metadata:
-  name: test-pod.ns1
+  name: test-pod.ns1.net1.ns1.ovn
 spec:
   subnet: net1
   podType: ""
