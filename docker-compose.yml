@@ -1,0 +1,61 @@
+services:
+  test_service:
+    image: docker.0rays.club/cbctf/netshoot:v0.13
+    cpus: 0.500000
+    mem_limit: 524288000
+    working_dir: /root
+    expose:
+      - "80/tcp"
+    environment:
+      - FLAG=static{static_flag}
+      - FLAG_2=dynamic{dynamic_flag}
+      - FLAG_3=uuid{}
+    volumes:
+      - FLAG_0:/flag
+    command:
+      - "sleep"
+      - "inifity"
+    networks:
+      network1:
+        ipv4_address: 192.168.0.2
+
+  another_service:
+    image: docker.0rays.club/cbctf/netshoot:v0.13
+    cpus: 0.500000
+    mem_limit: 524288000
+    working_dir: /root
+    expose:
+      - "80/tcp"
+    environment:
+      - FLAG_3=static{another_env_flag_value}
+    volumes:
+      - FLAG_1:/flag
+    command:
+      - "sleep"
+      - "inifity"
+    networks:
+      network2:
+        ipv4_address: 192.168.1.2
+
+volumes:
+  FLAG_0:
+    labels:
+      - value=static{static_flag_value}
+  FLAG_1:
+    labels:
+      - value=dynamic{dynamic_flag_value}
+
+networks:
+  network1:
+    external: true
+    ipam:
+      config:
+        - subnet: 192.168.0.0/24
+          gateway: 192.168.0.1
+
+  network2:
+    external: false
+    ipam:
+      config:
+        - subnet: 192.168.1.0/24
+          gateway: 192.168.1.1
