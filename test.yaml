@@ -98,3 +98,4 @@ spec:
     - name: test-1-1
       image: docker.0rays.club/cbctf/netshoot:v0.13
       command: ["sleep", "infinity"]
+
