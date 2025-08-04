@@ -1,0 +1,29 @@
+{
+  "server": {
+    "name": "mcp-demo-server",
+    "version": "1.0.0",
+    "description": "MCP演示服务器"
+  },
+  "tools": {
+    "add_note": {
+      "description": "添加笔记",
+      "parameters": ["title", "content"]
+    },
+    "list_notes": {
+      "description": "列出笔记",
+      "parameters": ["limit"]
+    },
+    "get_time": {
+      "description": "获取时间",
+      "parameters": ["format"]
+    }
+  },
+  "database": {
+    "type": "sqlite",
+    "path": "mcp_data.db"
+  },
+  "logging": {
+    "level": "INFO",
+    "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  }
+} 
